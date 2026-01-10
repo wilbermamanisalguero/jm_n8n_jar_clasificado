@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: jm-n8n-jar-clasificado
+
+app:
+  # Carpeta donde se encuentran las imágenes a procesar
+  input-folder: C:\Users\wmamani\Downloads\Trabajo_JmAlpaca_2022-2024
+
+  # URL del webhook de N8N
+  n8n-url: https://wilbermamanisalguero.app.n8n.cloud/webhook/4178ec1e-4e41-4719-9fb6-211fbca9b7eb
+
+  # Acción después de un envío exitoso: DELETE o MOVE
+  success-action: MOVE
+
+  # Carpeta donde se mueven los archivos procesados exitosamente (requerido si success-action=MOVE)
+  processed-folder: C:\Users\wmamani\Downloads\Trabajo_JmAlpaca_2022-2024\processed
+
+  # Carpeta donde se mueven los archivos con error (opcional)
+  error-folder: C:\Users\wmamani\Downloads\Trabajo_JmAlpaca_2022-2024\error
+
+  # Edad mínima del archivo en segundos para procesarlo (evita archivos incompletos)
+  min-file-age-seconds: 5
+
+  # Timeout para la petición HTTP en segundos
+  timeout-seconds: 30
+
+  # Número máximo de reintentos (no implementado aún, reservado para futuro)
+  max-retries: 3
+
+  # Nombre del campo multipart para el archivo
+  multipart-field-name: clasificadoImgN8n
+
+logging:
+  level:
+    com.pe.jm_n8n_jar_clasificado: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

@@ -1,0 +1,213 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                   JM N8N CLASIFICADOS - ESTRUCTURA COMPLETA                  ║
+║                         Proyecto Spring Boot + Maven                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+jm_n8n_jar_clasificado/
+│
+├── pom.xml                                    [Maven] Configuración con todas las dependencias
+├── .gitignore                                 [Git] Archivos a ignorar
+│
+├── README.md                                  [Doc] Documentación completa del proyecto
+├── PROYECTO_RESUMEN.md                        [Doc] Resumen técnico y decisiones
+├── GUIA_RAPIDA.md                             [Doc] Guía de uso rápido y troubleshooting
+├── HELP.md                                    [Doc] Generado por Spring Initializr
+├── ESTRUCTURA_PROYECTO.txt                    [Doc] Este archivo
+│
+├── build.bat                                  [Script] Compilar proyecto en Windows
+├── run.bat                                    [Script] Ejecutar JAR en Windows
+│
+├── src/
+│   ├── main/
+│   │   ├── java/com/pe/jm_n8n_jar_clasificado/
+│   │   │   │
+│   │   │   ├── JmN8nJarClasificadoApplication.java    [Main] Clase principal con @EnableScheduling
+│   │   │   │
+│   │   │   ├── config/
+│   │   │   │   ├── AppProperties.java                  [Config] Propiedades de configuración
+│   │   │   │   └── RestTemplateConfig.java             [Config] Bean RestTemplate con timeouts
+│   │   │   │
+│   │   │   ├── model/
+│   │   │   │   └── FileInfo.java                       [Model] File + LocalDateTime
+│   │   │   │
+│   │   │   ├── scheduler/
+│   │   │   │   └── ImageProcessorScheduler.java        [Scheduler] Job programado (cron cada minuto)
+│   │   │   │
+│   │   │   └── service/
+│   │   │       ├── FileScannerService.java             [Service] Buscar y seleccionar archivo más antiguo
+│   │   │       ├── N8nUploadService.java               [Service] Upload multipart a N8N
+│   │   │       └── FilePostProcessService.java         [Service] Delete/Move post-procesamiento
+│   │   │
+│   │   └── resources/
+│   │       ├── application.yml                         [Config] Configuración por defecto
+│   │       └── application-dev.yml                     [Config] Perfil de desarrollo
+│   │
+│   └── test/
+│       └── java/com/pe/jm_n8n_jar_clasificado/
+│           └── JmN8nJarClasificadoApplicationTests.java [Test] Test básico de contexto
+│
+└── target/                                     [Build] Generado por Maven (gitignored)
+    └── jm_n8n_jar_clasificado-0.0.1-SNAPSHOT.jar       [JAR] Ejecutable
+
+════════════════════════════════════════════════════════════════════════════════
+
+RESUMEN DE ARCHIVOS CREADOS:
+
+📦 CONFIGURACIÓN MAVEN
+   ✓ pom.xml                                    Spring Boot 4.0.0, Java 21, Vert.x 4.5.1
+
+📝 DOCUMENTACIÓN
+   ✓ README.md                                  Documentación completa (340+ líneas)
+   ✓ PROYECTO_RESUMEN.md                        Resumen técnico (240+ líneas)
+   ✓ GUIA_RAPIDA.md                             Guía de uso (330+ líneas)
+   ✓ ESTRUCTURA_PROYECTO.txt                    Este archivo
+
+☕ CÓDIGO JAVA (8 clases)
+   ✓ JmN8nJarClasificadoApplication.java        Clase principal
+   ✓ AppProperties.java                         Configuración
+   ✓ RestTemplateConfig.java                    Bean HTTP Client
+   ✓ FileInfo.java                              Modelo de datos
+   ✓ FileScannerService.java                    Escaneo de archivos
+   ✓ N8nUploadService.java                      Upload multipart
+   ✓ FilePostProcessService.java                Post-procesamiento
+   ✓ ImageProcessorScheduler.java               Scheduler (cron)
+
+⚙️ CONFIGURACIÓN
+   ✓ application.yml                            Config producción
+   ✓ application-dev.yml                        Config desarrollo
+   ✓ .gitignore                                 Git ignore rules
+
+🔧 SCRIPTS WINDOWS
+   ✓ build.bat                                  Compilar proyecto
+   ✓ run.bat                                    Ejecutar JAR
+
+════════════════════════════════════════════════════════════════════════════════
+
+DEPENDENCIAS MAVEN (del pom.xml):
+
+Spring Boot Starters:
+  • spring-boot-starter
+  • spring-boot-starter-web
+  • spring-boot-starter-validation
+  • spring-boot-starter-test (scope: test)
+
+Vert.x (versión 4.5.1):
+  • vertx-core
+  • vertx-mysql-client
+  • vertx-sql-client
+
+Utilidades:
+  • lombok (optional)
+  • jackson-databind
+  • jackson-datatype-jsr310
+
+════════════════════════════════════════════════════════════════════════════════
+
+CARACTERÍSTICAS IMPLEMENTADAS:
+
+✓ Scheduler cada 1 minuto (@Scheduled)
+✓ Validación de patrón YYYYMMDD_HHMMSS.jpg
+✓ Selección del archivo más antiguo (por timestamp del nombre)
+✓ Filtro de archivos incompletos (tamaño 0 y edad mínima)
+✓ Upload multipart/form-data con RestTemplate
+✓ Configuración de timeouts HTTP
+✓ Post-procesamiento: DELETE o MOVE
+✓ Manejo de errores con carpeta error/
+✓ Control de concurrencia (AtomicBoolean)
+✓ Logs detallados en cada paso
+✓ Configuración flexible por application.yml
+✓ Creación automática de carpetas
+
+════════════════════════════════════════════════════════════════════════════════
+
+COMANDOS RÁPIDOS:
+
+Compilar:
+  mvn clean package
+  o ejecutar: build.bat
+
+Ejecutar:
+  java -jar target\jm_n8n_jar_clasificado-0.0.1-SNAPSHOT.jar
+  o ejecutar: run.bat
+
+Ejecutar con perfil dev:
+  java -jar target\jm_n8n_jar_clasificado-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+
+Cambiar configuración sin recompilar:
+  java -jar target\jm_n8n_jar_clasificado-0.0.1-SNAPSHOT.jar ^
+    --app.input-folder=D:\MiCarpeta ^
+    --app.success-action=DELETE
+
+════════════════════════════════════════════════════════════════════════════════
+
+CONFIGURACIÓN REQUERIDA (application.yml):
+
+OBLIGATORIO:
+  app.input-folder           Carpeta donde están los archivos JPG
+  app.n8n-url               URL del webhook de N8N
+  app.success-action        DELETE o MOVE
+
+CONDICIONAL:
+  app.processed-folder      Requerido si success-action=MOVE
+
+OPCIONAL:
+  app.error-folder          Carpeta para archivos con error
+  app.min-file-age-seconds  Edad mínima (default: 5)
+  app.timeout-seconds       Timeout HTTP (default: 30)
+  app.max-retries           Reintentos (default: 3, no usado aún)
+  app.multipart-field-name  Nombre campo (default: clasificadoImgN8n)
+
+════════════════════════════════════════════════════════════════════════════════
+
+FLUJO DE EJECUCIÓN:
+
+CADA MINUTO:
+  1. Scheduler se activa (cron: 0 * * * * *)
+  2. Verifica lock de concurrencia
+  3. FileScannerService busca archivos *.jpg válidos
+  4. Filtra por patrón YYYYMMDD_HHMMSS.jpg
+  5. Filtra tamaño > 0 y edad > minFileAgeSeconds
+  6. Selecciona el más antiguo por timestamp
+  7. N8nUploadService envía archivo como multipart
+  8. Si HTTP 200/201: success-action (DELETE o MOVE)
+  9. Si error: mueve a error-folder (si existe)
+  10. Libera lock de concurrencia
+
+════════════════════════════════════════════════════════════════════════════════
+
+PRÓXIMOS PASOS PARA EL USUARIO:
+
+1. Revisar y ajustar src\main\resources\application.yml
+2. Compilar el proyecto: mvn clean package
+3. Ejecutar: java -jar target\jm_n8n_jar_clasificado-0.0.1-SNAPSHOT.jar
+4. Monitorear logs para verificar funcionamiento
+5. Colocar archivos JPG con formato YYYYMMDD_HHMMSS.jpg en input-folder
+6. Verificar procesamiento cada minuto
+
+════════════════════════════════════════════════════════════════════════════════
+
+NOTAS TÉCNICAS:
+
+• Java 21 requerido
+• Maven 3.6+ recomendado
+• RestTemplate elegido por simplicidad y soporte nativo de multipart
+• AtomicBoolean para control de concurrencia simple
+• Patrón Service Layer para separación de responsabilidades
+• @ConfigurationProperties para configuración type-safe
+• Lombok para reducir boilerplate
+
+════════════════════════════════════════════════════════════════════════════════
+
+SOPORTE:
+
+Para más información, consultar:
+  • README.md              - Documentación completa
+  • PROYECTO_RESUMEN.md    - Decisiones técnicas y arquitectura
+  • GUIA_RAPIDA.md         - Casos de uso y troubleshooting
+
+════════════════════════════════════════════════════════════════════════════════
+
+Proyecto generado: 2025-01-09
+Spring Boot: 4.0.0
+Java: 21
+Vert.x: 4.5.1

@@ -1,0 +1,37 @@
+# Perfil de desarrollo - Ejemplo de configuración alternativa
+# Para usar: java -jar target\jm_n8n_jar_clasificado-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+
+spring:
+  application:
+    name: jm-n8n-jar-clasificado-dev
+
+app:
+  # Carpeta de pruebas local
+  input-folder: C:\temp\test-images
+
+  # URL del webhook de N8N (puede ser un ambiente de pruebas)
+  n8n-url: https://wilbermamanisalguero.app.n8n.cloud/webhook-test/4178ec1e-4e41-4719-9fb6-211fbca9b7eb
+
+  # En desarrollo, mejor mover que borrar
+  success-action: MOVE
+
+  processed-folder: C:\temp\test-images\processed
+
+  error-folder: C:\temp\test-images\error
+
+  # En desarrollo, permitir archivos más recientes
+  min-file-age-seconds: 2
+
+  # Timeout más corto para desarrollo
+  timeout-seconds: 15
+
+  max-retries: 3
+
+  multipart-field-name: clasificadoImgN8n
+
+logging:
+  level:
+    com.pe.jm_n8n_jar_clasificado: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
