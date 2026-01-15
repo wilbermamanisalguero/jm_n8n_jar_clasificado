@@ -1,0 +1,638 @@
+
+
+REVISAR RECOMENDAR FUNCION O PROCEDIMIENTO EN MYSQL , TAMBIEN Y EL PARAMETRO ES ID_CLASIFICADO Y EL RESULTADO ES  EL CODIGO Y DESCRIPCION
+
+EL PROGRAMA DEBE TENER LO SIGUIENTE 
+
+			SUMA_IMPORTE_TOTAL
+
+			PRECIO_ROYAL=1.1
+			(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='ROYAL' AND ID_CLASIFICADO=P_ID_CLASIFICADO) INTO SUMA_ROYAL 
+
+			INSERT INTO CLASIFICADO_DETALLE (
+				ID_CLASIFICADO,
+				ID_AGRUPACION,
+				TOTAL_KG,
+				PRECIO_KG,
+				SUBTOTAL_IMPORTE
+			)
+			P_ID_CLASIFICADO,
+			'ROYAL',
+			SUMA_ROYAL,
+			PRECIO_ROYAL,
+			(SUMA_ROYAL*PRECIO_ROYAL) 
+
+			 SUMA_IMPORTE_TOTAL+=(SUMA_ROYAL*PRECIO_ROYAL)
+			-----------------------------------------------
+
+			PRECIO_BL=0.8
+
+			(
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='STD' AND ID_CLASIFICADO=P_ID_CLASIFICADO) + 
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='BL-B' AND ID_CLASIFICADO=P_ID_CLASIFICADO)+
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='BL-X' AND ID_CLASIFICADO=P_ID_CLASIFICADO)+
+			) INTO SUMA_BL
+
+			INSERT INTO CLASIFICADO_DETALLE (
+				ID_CLASIFICADO,
+				ID_AGRUPACION,
+				TOTAL_KG,
+				PRECIO_KG,
+				SUBTOTAL_IMPORTE
+			)
+			P_ID_CLASIFICADO,
+			'BL',
+			SUMA_ROYAL,
+			PRECIO_BL,
+			(SUMA_BL*PRECIO_BL)
+
+			SUMA_IMPORTE_TOTAL+=(SUMA_BL*PRECIO_BL)
+			-------------------------------------- 
+			PRECIO_FS=0.7
+
+			(
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='FS-B' AND ID_CLASIFICADO=P_ID_CLASIFICADO)+
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='FS-X' AND ID_CLASIFICADO=P_ID_CLASIFICADO)
+			) INTO SUMA_FS
+
+			INSERT INTO CLASIFICADO_DETALLE (
+				ID_CLASIFICADO,
+				ID_AGRUPACION,
+				TOTAL_KG,
+				PRECIO_KG,
+				SUBTOTAL_IMPORTE
+			)
+			P_ID_CLASIFICADO,
+			'FS',
+			SUMA_FS,
+			PRECIO_FS,
+			(SUMA_FS*PRECIO_FS)
+				
+			SUMA_IMPORTE_TOTAL+=(SUMA_FS*PRECIO_FS)
+			---------------------
+			PRECIO_HZ=0.7	
+
+				
+			(	
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='HZ-B' AND ID_CLASIFICADO=P_ID_CLASIFICADO)+
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='HZ-X' AND ID_CLASIFICADO=P_ID_CLASIFICADO)+
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='AG' AND ID_CLASIFICADO=P_ID_CLASIFICADO)*1.1;
+			) INTO SUMA_HZ
+
+			INSERT INTO CLASIFICADO_DETALLE (
+				ID_CLASIFICADO,
+				ID_AGRUPACION,
+				TOTAL_KG,
+				PRECIO_KG,
+				SUBTOTAL_IMPORTE
+			)
+			P_ID_CLASIFICADO,
+			'HZ',
+			SUMA_HZ,
+			PRECIO_HZ,
+			(SUMA_HZ*PRECIO_HZ)
+
+			SUMA_IMPORTE_TOTAL+=(SUMA_HZ*PRECIO_HZ)
+
+			--------------------
+			PRECIO_SURI=0.6
+
+
+			(
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='SURI-BL' AND ID_CLASIFICADO=P_ID_CLASIFICADO)+
+				(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='SURI-FS' AND ID_CLASIFICADO=P_ID_CLASIFICADO)
+			) INTO SUMA_SURI
+
+
+			INSERT INTO CLASIFICADO_DETALLE (
+				ID_CLASIFICADO,
+				ID_AGRUPACION,
+				TOTAL_KG,
+				PRECIO_KG,
+				SUBTOTAL_IMPORTE
+			)
+			P_ID_CLASIFICADO,
+			'SURI',
+			SUMA_SURI,
+			PRECIO_SURI,
+			(SUMA_SURI*PRECIO_SURI)
+
+			SUMA_IMPORTE_TOTAL+=(SUMA_SURI*PRECIO_SURI)
+			------------------------
+			PRECIO_SURI_HZ=0.3
+
+			(SELECT SUM(PESO_KG) FROM CLASIFICADO_PESO WHERE ID_CALIDAD='SURI-HZ' AND ID_CLASIFICADO=P_ID_CLASIFICADO)
+			INTO SUMA_SURI_HZ
+
+			INSERT INTO CLASIFICADO_DETALLE (
+				ID_CLASIFICADO,
+				ID_AGRUPACION,
+				TOTAL_KG,
+				PRECIO_KG,
+				SUBTOTAL_IMPORTE
+			)
+			P_ID_CLASIFICADO,
+			'SURI-HZ',
+			SUMA_SURI_HZ,
+			PRECIO_SURI_HZ,
+			(SUMA_SURI_HZ*PRECIO_SURI_HZ)
+
+
+			SUMA_IMPORTE_TOTAL+=(SUMA_SURI_HZ*PRECIO_SURI_HZ)
+			=============================
+			update CLASIFICADO set IMPORTE_TOTAL=SUMA_IMPORTE_TOTAL
+			where ID_CLASIFICADO=P_ID_CLASIFICADO
+
+TAMBIEN TE COMPARTO EL SCRIPT  Y TABLAS
+
+-- ==========================================================
+-- CATALOGO: SECCION
+-- ==========================================================
+CREATE TABLE SECCION (
+  ID_SECCION VARCHAR(20) NOT NULL,
+  CONSTRAINT PK_SECCION PRIMARY KEY (ID_SECCION)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+INSERT INTO SECCION (ID_SECCION) VALUES
+('HUACAYO'),
+('SURI');
+
+-- ==========================================================
+-- CATALOGO: AGRUPACION (DETALLE)
+-- ==========================================================
+CREATE TABLE AGRUPACION (
+  ID_AGRUPACION VARCHAR(30) NOT NULL,
+  CONSTRAINT PK_AGRUPACION PRIMARY KEY (ID_AGRUPACION)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+INSERT INTO AGRUPACION (ID_AGRUPACION) VALUES
+('ROYAL'),
+('BL'),
+('FS'),
+('HZ'),
+('STD'),
+('SURI'),
+('SURI-HZ'),
+('SURI-STD');
+
+-- ==========================================================
+-- CATALOGO: CALIDAD (relaciona SECCION + AGRUPACION)
+-- ==========================================================
+CREATE TABLE CALIDAD (
+  ID_CALIDAD    VARCHAR(30) NOT NULL,
+  ID_SECCION    VARCHAR(20) NOT NULL,
+  ID_AGRUPACION VARCHAR(30) NOT NULL,
+
+  CONSTRAINT PK_CALIDAD PRIMARY KEY (ID_CALIDAD),
+
+  CONSTRAINT FK_CALIDAD_SECCION
+    FOREIGN KEY (ID_SECCION) REFERENCES SECCION(ID_SECCION),
+
+  CONSTRAINT FK_CALIDAD_AGRUPACION
+    FOREIGN KEY (ID_AGRUPACION) REFERENCES AGRUPACION(ID_AGRUPACION)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+INSERT INTO CALIDAD (ID_CALIDAD, ID_SECCION, ID_AGRUPACION) VALUES
+-- HUACAYO
+('ROYAL', 'HUACAYO', 'ROYAL'),
+('BL-B',  'HUACAYO', 'BL'),
+('BL-X',  'HUACAYO', 'BL'),
+('FS-B',  'HUACAYO', 'FS'),
+('FS-X',  'HUACAYO', 'FS'),
+('HZ-B',  'HUACAYO', 'HZ'),
+('HZ-X',  'HUACAYO', 'HZ'),
+('AG',    'HUACAYO', 'HZ'),
+('STD',   'HUACAYO', 'STD'),
+-- SURI
+('SURI-BL',  'SURI', 'SURI'),
+('SURI-FS',  'SURI', 'SURI'),
+('SURI-HZ',  'SURI', 'SURI-HZ'),
+('SURI-STD', 'SURI', 'SURI-STD');
+
+-- ==========================================================
+-- TABLA: CLASIFICADOR
+-- ==========================================================
+CREATE TABLE CLASIFICADOR (
+  ID_CLASIFICADOR VARCHAR(60) NOT NULL,
+  CONSTRAINT PK_CLASIFICADOR PRIMARY KEY (ID_CLASIFICADOR)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+INSERT INTO CLASIFICADOR (ID_CLASIFICADOR) VALUES
+('ROGER'),
+('YOLA'),
+('ISIDORA');
+
+-- ==========================================================
+-- TABLA: CLASIFICADO (cabecera)
+-- ==========================================================
+CREATE TABLE CLASIFICADO (
+  ID_CLASIFICADO  VARCHAR(20) NOT NULL,
+  ID_CLASIFICADOR VARCHAR(60) NOT NULL,
+  FECHA           DATE NULL,
+  IMPORTE_TOTAL   DECIMAL(14,2) NULL,
+  OBSERVACIONES   VARCHAR(500) NULL,
+
+  CONSTRAINT PK_CLASIFICADO PRIMARY KEY (ID_CLASIFICADO),
+
+  CONSTRAINT FK_CP_ID_CLASIFICADOR
+    FOREIGN KEY (ID_CLASIFICADOR)
+    REFERENCES CLASIFICADOR(ID_CLASIFICADOR)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+-- ==========================================================
+-- TABLA: CLASIFICADO_PESO (pesos[] por calidad)
+-- ==========================================================
+CREATE TABLE CLASIFICADO_PESO (
+  ID_PESO        BIGINT NOT NULL AUTO_INCREMENT,
+  ID_CLASIFICADO VARCHAR(20) NOT NULL,
+  ID_CALIDAD     VARCHAR(30) NOT NULL,
+  PESO_KG        DECIMAL(10,2) NOT NULL,
+
+  CONSTRAINT PK_CLASIFICADO_PESO PRIMARY KEY (ID_PESO),
+
+  CONSTRAINT FK_CP_CLASIFICADO
+    FOREIGN KEY (ID_CLASIFICADO)
+    REFERENCES CLASIFICADO(ID_CLASIFICADO)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
+
+  CONSTRAINT FK_CP_CALIDAD
+    FOREIGN KEY (ID_CALIDAD)
+    REFERENCES CALIDAD(ID_CALIDAD)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+-- ==========================================================
+-- TABLA: CLASIFICADO_RESUMEN (total_kg por calidad)
+-- ==========================================================
+CREATE TABLE CLASIFICADO_RESUMEN (
+  ID_CLASIFICADO VARCHAR(20) NOT NULL,
+  ID_CALIDAD     VARCHAR(30) NOT NULL,
+  TOTAL_KG       DECIMAL(10,2) NOT NULL,
+
+  CONSTRAINT PK_CLASIFICADO_RESUMEN PRIMARY KEY (ID_CLASIFICADO, ID_CALIDAD),
+
+  CONSTRAINT FK_CR_CLASIFICADO
+    FOREIGN KEY (ID_CLASIFICADO)
+    REFERENCES CLASIFICADO(ID_CLASIFICADO)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
+
+  CONSTRAINT FK_CR_CALIDAD
+    FOREIGN KEY (ID_CALIDAD)
+    REFERENCES CALIDAD(ID_CALIDAD)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+-- ==========================================================
+-- TABLA: CLASIFICADO_DETALLE (totales por agrupación)
+-- ==========================================================
+CREATE TABLE CLASIFICADO_DETALLE (
+  ID_CLASIFICADO   VARCHAR(20) NOT NULL,
+  ID_AGRUPACION    VARCHAR(30) NOT NULL,
+  TOTAL_KG         DECIMAL(10,2) NOT NULL,
+  PRECIO_KG        DECIMAL(10,2) NOT NULL,
+  SUBTOTAL_IMPORTE DECIMAL(12,2) NOT NULL,
+
+  CONSTRAINT PK_CLASIFICADO_DETALLE PRIMARY KEY (ID_CLASIFICADO, ID_AGRUPACION),
+
+  CONSTRAINT FK_CD_CLASIFICADO
+    FOREIGN KEY (ID_CLASIFICADO)
+    REFERENCES CLASIFICADO(ID_CLASIFICADO)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
+
+  CONSTRAINT FK_CD_AGRUPACION
+    FOREIGN KEY (ID_AGRUPACION)
+    REFERENCES AGRUPACION(ID_AGRUPACION)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+-- ==========================================================
+-- TABLA: CLASIFICADO_ERROR_CARGA
+-- ==========================================================
+CREATE TABLE CLASIFICADO_ERROR_CARGA (
+  ID_ERROR_CARGA  BIGINT NOT NULL AUTO_INCREMENT,
+  ID_CLASIFICADO  VARCHAR(20) NOT NULL,
+  CODIGO          VARCHAR(20) NOT NULL,
+  ERROR_CARGA     VARCHAR(500) NOT NULL,
+
+  CONSTRAINT PK_CLASIFICADO_ERROR_CARGA PRIMARY KEY (ID_ERROR_CARGA),
+
+  CONSTRAINT FK_CEC_CLASIFICADO
+    FOREIGN KEY (ID_CLASIFICADO)
+    REFERENCES CLASIFICADO(ID_CLASIFICADO)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_spanish_ci;
+
+-- ==========================================================
+-- INDICES RECOMENDADOS
+-- ==========================================================
+CREATE INDEX IX_CALIDAD_SECCION   ON CALIDAD (ID_SECCION);
+CREATE INDEX IX_CALIDAD_AGRUP     ON CALIDAD (ID_AGRUPACION);
+
+CREATE INDEX IX_CP_CLASIF_CALIDAD ON CLASIFICADO_PESO (ID_CLASIFICADO, ID_CALIDAD);
+CREATE INDEX IX_CR_ID_CALIDAD     ON CLASIFICADO_RESUMEN (ID_CALIDAD);
+CREATE INDEX IX_CD_ID_AGRUPACION  ON CLASIFICADO_DETALLE (ID_AGRUPACION);
+
+-- ==========================================================
+-- PROCEDIMIENTO: SP_PROCESAR_CLASIFICADO_DETALLE
+-- ==========================================================
+-- Descripción: Calcula y registra el detalle de clasificación por agrupación
+--              y actualiza el importe total del clasificado.
+-- Parámetros:
+--   IN  P_ID_CLASIFICADO: ID del clasificado a procesar
+--   OUT P_CODIGO: Código de resultado (OK, ERROR)
+--   OUT P_DESCRIPCION: Descripción del resultado
+-- ==========================================================
+DELIMITER $$
+
+CREATE PROCEDURE SP_PROCESAR_CLASIFICADO_DETALLE(
+    IN  P_ID_CLASIFICADO VARCHAR(20),
+    OUT P_CODIGO         VARCHAR(20),
+    OUT P_DESCRIPCION    VARCHAR(500)
+)
+BEGIN
+    -- Declaración de variables
+    DECLARE V_SUMA_ROYAL      DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE V_SUMA_BL         DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE V_SUMA_FS         DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE V_SUMA_HZ         DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE V_SUMA_SURI       DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE V_SUMA_SURI_HZ    DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE V_SUMA_IMPORTE_TOTAL DECIMAL(14,2) DEFAULT 0.00;
+    DECLARE V_SUBTOTAL_IMPORTE DECIMAL(14,2) DEFAULT 0.00;
+
+
+    -- Precios por agrupación
+    DECLARE V_PRECIO_ROYAL    DECIMAL(10,2) DEFAULT 1.1;
+    DECLARE V_PRECIO_BL       DECIMAL(10,2) DEFAULT 0.8;
+    DECLARE V_PRECIO_FS       DECIMAL(10,2) DEFAULT 0.7;
+    DECLARE V_PRECIO_HZ       DECIMAL(10,2) DEFAULT 0.7;
+    DECLARE V_PRECIO_SURI     DECIMAL(10,2) DEFAULT 0.6;
+    DECLARE V_PRECIO_SURI_HZ  DECIMAL(10,2) DEFAULT 0.3;
+
+
+    DECLARE V_CLASIFICADO_EXISTS INT DEFAULT 0;
+    DECLARE V_PESO_AG         DECIMAL(10,2) DEFAULT 0.00;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET P_CODIGO = 'ERROR';
+        SET P_DESCRIPCION = 'Error al procesar el clasificado. Operación cancelada.';
+    END;
+
+    -- Iniciar transacción
+    START TRANSACTION;
+
+    -- Validar que el clasificado existe
+    SELECT COUNT(*) INTO V_CLASIFICADO_EXISTS
+    FROM CLASIFICADO
+    WHERE ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+    IF V_CLASIFICADO_EXISTS = 0 THEN
+        SET P_CODIGO = 'ERROR';
+        SET P_DESCRIPCION = CONCAT('El clasificado [', P_ID_CLASIFICADO, '] no existe.');
+        ROLLBACK;
+    ELSE
+        -- Limpiar detalle anterior si existe
+        DELETE FROM CLASIFICADO_DETALLE
+        WHERE ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        -- ==========================================================
+        -- 1. ROYAL
+        -- ==========================================================
+        SELECT ROUND(COALESCE(SUM(PESO_KG), 0.00), 2) INTO V_SUMA_ROYAL
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD = 'ROYAL' AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        IF V_SUMA_ROYAL > 0 THEN
+            SET V_SUBTOTAL_IMPORTE = ROUND(V_SUMA_ROYAL * V_PRECIO_ROYAL, 2);
+
+            INSERT INTO CLASIFICADO_DETALLE (
+                ID_CLASIFICADO,
+                ID_AGRUPACION,
+                TOTAL_KG,
+                PRECIO_KG,
+                SUBTOTAL_IMPORTE
+            ) VALUES (
+                P_ID_CLASIFICADO,
+                'ROYAL',
+                V_SUMA_ROYAL,
+                V_PRECIO_ROYAL,
+                V_SUBTOTAL_IMPORTE
+            );
+
+            SET V_SUMA_IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL + V_SUBTOTAL_IMPORTE, 2);
+        END IF;
+
+        -- ==========================================================
+        -- 2. BL (STD + BL-B + BL-X)
+        -- ==========================================================
+        SELECT ROUND(
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'STD'  THEN PESO_KG ELSE 0 END), 0.00) +
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'BL-B' THEN PESO_KG ELSE 0 END), 0.00) +
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'BL-X' THEN PESO_KG ELSE 0 END), 0.00), 2)
+        INTO V_SUMA_BL
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD IN ('STD', 'BL-B', 'BL-X') AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        IF V_SUMA_BL > 0 THEN
+            SET V_SUBTOTAL_IMPORTE = ROUND(V_SUMA_BL * V_PRECIO_BL, 2);
+
+            INSERT INTO CLASIFICADO_DETALLE (
+                ID_CLASIFICADO,
+                ID_AGRUPACION,
+                TOTAL_KG,
+                PRECIO_KG,
+                SUBTOTAL_IMPORTE
+            ) VALUES (
+                P_ID_CLASIFICADO,
+                'BL',
+                V_SUMA_BL,
+                V_PRECIO_BL,
+                V_SUBTOTAL_IMPORTE
+            );
+
+            SET V_SUMA_IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL + V_SUBTOTAL_IMPORTE, 2);
+        END IF;
+
+        -- ==========================================================
+        -- 3. FS (FS-B + FS-X)
+        -- ==========================================================
+        SELECT ROUND(
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'FS-B' THEN PESO_KG ELSE 0 END), 0.00) +
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'FS-X' THEN PESO_KG ELSE 0 END), 0.00), 2)
+        INTO V_SUMA_FS
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD IN ('FS-B', 'FS-X') AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        IF V_SUMA_FS > 0 THEN
+            SET V_SUBTOTAL_IMPORTE = ROUND(V_SUMA_FS * V_PRECIO_FS, 2);
+
+            INSERT INTO CLASIFICADO_DETALLE (
+                ID_CLASIFICADO,
+                ID_AGRUPACION,
+                TOTAL_KG,
+                PRECIO_KG,
+                SUBTOTAL_IMPORTE
+            ) VALUES (
+                P_ID_CLASIFICADO,
+                'FS',
+                V_SUMA_FS,
+                V_PRECIO_FS,
+                V_SUBTOTAL_IMPORTE
+            );
+
+            SET V_SUMA_IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL + V_SUBTOTAL_IMPORTE, 2);
+        END IF;
+
+        -- ==========================================================
+        -- 4. HZ (HZ-B + HZ-X + AG*1.1)
+        -- ==========================================================
+        -- Primero obtenemos el peso de AG
+        SELECT ROUND(COALESCE(SUM(PESO_KG), 0.00), 2) INTO V_PESO_AG
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD = 'AG' AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        -- Calculamos HZ (HZ-B + HZ-X + AG*1.1)
+        SELECT ROUND(
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'HZ-B' THEN PESO_KG ELSE 0 END), 0.00) +
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'HZ-X' THEN PESO_KG ELSE 0 END), 0.00) +
+            (V_PESO_AG * 1.1), 2)
+        INTO V_SUMA_HZ
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD IN ('HZ-B', 'HZ-X') AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        IF V_SUMA_HZ > 0 THEN
+            SET V_SUBTOTAL_IMPORTE = ROUND(V_SUMA_HZ * V_PRECIO_HZ, 2);
+
+            INSERT INTO CLASIFICADO_DETALLE (
+                ID_CLASIFICADO,
+                ID_AGRUPACION,
+                TOTAL_KG,
+                PRECIO_KG,
+                SUBTOTAL_IMPORTE
+            ) VALUES (
+                P_ID_CLASIFICADO,
+                'HZ',
+                V_SUMA_HZ,
+                V_PRECIO_HZ,
+                V_SUBTOTAL_IMPORTE
+            );
+
+            SET V_SUMA_IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL + V_SUBTOTAL_IMPORTE, 2);
+        END IF;
+
+        -- ==========================================================
+        -- 5. SURI (SURI-BL + SURI-FS)
+        -- ==========================================================
+        SELECT ROUND(
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'SURI-BL' THEN PESO_KG ELSE 0 END), 0.00) +
+            COALESCE(SUM(CASE WHEN ID_CALIDAD = 'SURI-FS' THEN PESO_KG ELSE 0 END), 0.00), 2)
+        INTO V_SUMA_SURI
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD IN ('SURI-BL', 'SURI-FS') AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        IF V_SUMA_SURI > 0 THEN
+            SET V_SUBTOTAL_IMPORTE = ROUND(V_SUMA_SURI * V_PRECIO_SURI, 2);
+
+            INSERT INTO CLASIFICADO_DETALLE (
+                ID_CLASIFICADO,
+                ID_AGRUPACION,
+                TOTAL_KG,
+                PRECIO_KG,
+                SUBTOTAL_IMPORTE
+            ) VALUES (
+                P_ID_CLASIFICADO,
+                'SURI',
+                V_SUMA_SURI,
+                V_PRECIO_SURI,
+                V_SUBTOTAL_IMPORTE
+            );
+
+            SET V_SUMA_IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL + V_SUBTOTAL_IMPORTE, 2);
+        END IF;
+
+        -- ==========================================================
+        -- 6. SURI-HZ
+        -- ==========================================================
+        SELECT ROUND(COALESCE(SUM(PESO_KG), 0.00), 2) INTO V_SUMA_SURI_HZ
+        FROM CLASIFICADO_PESO
+        WHERE ID_CALIDAD = 'SURI-HZ' AND ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        IF V_SUMA_SURI_HZ > 0 THEN
+            SET V_SUBTOTAL_IMPORTE = ROUND(V_SUMA_SURI_HZ * V_PRECIO_SURI_HZ, 2);
+
+            INSERT INTO CLASIFICADO_DETALLE (
+                ID_CLASIFICADO,
+                ID_AGRUPACION,
+                TOTAL_KG,
+                PRECIO_KG,
+                SUBTOTAL_IMPORTE
+            ) VALUES (
+                P_ID_CLASIFICADO,
+                'SURI-HZ',
+                V_SUMA_SURI_HZ,
+                V_PRECIO_SURI_HZ,
+                V_SUBTOTAL_IMPORTE
+            );
+
+            SET V_SUMA_IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL + V_SUBTOTAL_IMPORTE, 2);
+        END IF;
+
+        -- ==========================================================
+        -- 7. Actualizar IMPORTE_TOTAL en CLASIFICADO
+        -- ==========================================================
+        UPDATE CLASIFICADO
+        SET IMPORTE_TOTAL = ROUND(V_SUMA_IMPORTE_TOTAL, 2)
+        WHERE ID_CLASIFICADO = P_ID_CLASIFICADO;
+
+        -- Confirmar transacción
+        COMMIT;
+
+        SET P_CODIGO = 'OK';
+        SET P_DESCRIPCION = CONCAT('Clasificado procesado exitosamente. Importe total: ', FORMAT(V_SUMA_IMPORTE_TOTAL, 2));
+    END IF;
+
+END$$
+
+DELIMITER ;
+
+-- ==========================================================
+-- EJEMPLO DE USO DEL PROCEDIMIENTO
+-- ==========================================================
+-- CALL SP_PROCESAR_CLASIFICADO_DETALLE('CL001', @codigo, @descripcion);
+-- SELECT @codigo AS CODIGO, @descripcion AS DESCRIPCION;
+
+
+
+
+
+
