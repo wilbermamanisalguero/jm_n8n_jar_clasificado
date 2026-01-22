@@ -1,5 +1,7 @@
 package com.pe.jm_n8n_jar_clasificado.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pe.jm_n8n_jar_clasificado.config.AppProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -18,20 +21,74 @@ public class FilePostProcessService {
 
     private final AppProperties properties;
 
-    public void processSuccessfulUpload(File file) {
+    public void processSuccessfulUpload(File file, String jsonResponse) {
+        String targetFolder = properties.getProcessedFolder();
+
         switch (properties.getSuccessAction()) {
-            case DELETE -> deleteFile(file);
-            case MOVE -> moveToProcessed(file);
+            case DELETE:
+                saveJsonFile(file, jsonResponse, properties.getInputFolder());
+                deleteFile(file);
+                break;
+            case MOVE:
+                moveToProcessed(file);
+                saveJsonFile(file, jsonResponse, targetFolder);
+                break;
         }
     }
 
-    public void processFailedUpload(File file) {
+    public void processFailedUpload(File file, String jsonResponse) {
         if (properties.getErrorFolder() != null && !properties.getErrorFolder().isBlank()) {
             moveToError(file);
+            saveJsonFile(file, jsonResponse, properties.getErrorFolder());
         } else {
             log.warn("File {} upload failed but no error folder configured. File remains in input folder.",
                     file.getName());
+            saveJsonFile(file, jsonResponse, properties.getInputFolder());
         }
+    }
+
+    private void saveJsonFile(File originalFile, String jsonContent, String targetFolder) {
+        if (jsonContent == null || jsonContent.isBlank()) {
+            log.warn("No JSON content to save for file: {}", originalFile.getName());
+            return;
+        }
+
+        try {
+            String jsonFileName = getJsonFileName(originalFile.getName());
+            Path targetDir = Path.of(targetFolder);
+
+            if (!Files.exists(targetDir)) {
+                Files.createDirectories(targetDir);
+            }
+
+            Path jsonFilePath = targetDir.resolve(jsonFileName);
+
+            // Formatear JSON con indentación (beautify)
+            String formattedJson = formatJsonPretty(jsonContent);
+            Files.writeString(jsonFilePath, formattedJson, StandardCharsets.UTF_8);
+            log.info("Saved JSON response to: {}", jsonFilePath);
+
+        } catch (IOException e) {
+            log.error("Failed to save JSON file for {}: {}", originalFile.getName(), e.getMessage(), e);
+        }
+    }
+
+    private String formatJsonPretty(String jsonContent) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            Object json = mapper.readValue(jsonContent, Object.class);
+            return mapper.writeValueAsString(json);
+        } catch (Exception e) {
+            log.warn("Could not format JSON, saving as-is: {}", e.getMessage());
+            return jsonContent;
+        }
+    }
+
+    private String getJsonFileName(String originalFileName) {
+        int dotIndex = originalFileName.lastIndexOf('.');
+        String nameWithoutExt = dotIndex > 0 ? originalFileName.substring(0, dotIndex) : originalFileName;
+        return nameWithoutExt + ".json";
     }
 
     private void deleteFile(File file) {

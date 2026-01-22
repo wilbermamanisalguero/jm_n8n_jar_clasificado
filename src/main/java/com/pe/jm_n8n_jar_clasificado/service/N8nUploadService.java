@@ -1,6 +1,7 @@
 package com.pe.jm_n8n_jar_clasificado.service;
 
 import com.pe.jm_n8n_jar_clasificado.config.AppProperties;
+import com.pe.jm_n8n_jar_clasificado.model.UploadResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
@@ -25,7 +26,7 @@ public class N8nUploadService {
     private final AppProperties properties;
     private final RestTemplate restTemplate;
 
-    public boolean uploadFile(File file) {
+    public UploadResult uploadFile(File file) {
         try {
             log.info("Uploading file to N8N: {}", file.getName());
 
@@ -45,22 +46,24 @@ public class N8nUploadService {
             );
 
             HttpStatusCode statusCode = response.getStatusCode();
+            String responseBody = response.getBody();
             log.info("Upload response for {}: HTTP {}", file.getName(), statusCode.value());
+            log.debug("Response body: {}", responseBody);
 
             if (statusCode == HttpStatus.OK || statusCode == HttpStatus.CREATED) {
                 log.info("Successfully uploaded file: {}", file.getName());
-                return true;
+                return new UploadResult(true, responseBody);
             } else {
                 log.warn("Unexpected status code {} for file: {}", statusCode.value(), file.getName());
-                return false;
+                return new UploadResult(false, responseBody);
             }
 
         } catch (RestClientException e) {
             log.error("Failed to upload file {}: {}", file.getName(), e.getMessage(), e);
-            return false;
+            return new UploadResult(false, null);
         } catch (Exception e) {
             log.error("Unexpected error uploading file {}: {}", file.getName(), e.getMessage(), e);
-            return false;
+            return new UploadResult(false, null);
         }
     }
 }

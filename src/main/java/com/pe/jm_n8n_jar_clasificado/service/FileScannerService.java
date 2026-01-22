@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class FileScannerService {
 
-    private static final Pattern FILENAME_PATTERN = Pattern.compile("^(\\d{8})_(\\d{6})\\.jpg$");
+    private static final Pattern FILENAME_PATTERN = Pattern.compile("^(\\d{8})_(\\d{6})\\.png$");
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final AppProperties properties;
@@ -34,10 +34,10 @@ public class FileScannerService {
             return Optional.empty();
         }
 
-        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".jpg"));
+        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".png"));
 
         if (files == null || files.length == 0) {
-            log.debug("No .jpg files found in folder: {}", properties.getInputFolder());
+            log.debug("No .png files found in folder: {}", properties.getInputFolder());
             return Optional.empty();
         }
 

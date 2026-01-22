@@ -22,7 +22,7 @@ app:
   min-file-age-seconds: 5
 
   # Timeout para la petición HTTP en segundos
-  timeout-seconds: 30
+  timeout-seconds: 40
 
   # Número máximo de reintentos (no implementado aún, reservado para futuro)
   max-retries: 3
