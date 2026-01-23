@@ -21,8 +21,8 @@ app:
   # Edad mínima del archivo en segundos para procesarlo (evita archivos incompletos)
   min-file-age-seconds: 5
 
-  # Timeout para la petición HTTP en segundos
-  timeout-seconds: 40
+  # Timeout para la petición HTTP en segundos (1.5 minutos)
+  timeout-seconds: 90
 
   # Número máximo de reintentos (no implementado aún, reservado para futuro)
   max-retries: 3

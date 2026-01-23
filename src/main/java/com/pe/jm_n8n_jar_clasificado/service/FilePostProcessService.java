@@ -1,5 +1,7 @@
 package com.pe.jm_n8n_jar_clasificado.service;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pe.jm_n8n_jar_clasificado.config.AppProperties;
@@ -77,8 +79,13 @@ public class FilePostProcessService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+            // Configurar PrettyPrinter para que los arrays tengan saltos de línea
+            DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+            prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+
             Object json = mapper.readValue(jsonContent, Object.class);
-            return mapper.writeValueAsString(json);
+            return mapper.writer(prettyPrinter).writeValueAsString(json);
         } catch (Exception e) {
             log.warn("Could not format JSON, saving as-is: {}", e.getMessage());
             return jsonContent;
