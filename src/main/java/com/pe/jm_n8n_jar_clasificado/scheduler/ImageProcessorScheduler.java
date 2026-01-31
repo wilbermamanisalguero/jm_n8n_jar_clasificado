@@ -28,7 +28,7 @@ public class ImageProcessorScheduler {
      * Scheduled job that runs every minute.
      * Processes the oldest valid .png file from the input folder.
      */
-    @Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(fixedDelay = 90000)
     public void processNextImage() {
         if (!isProcessing.compareAndSet(false, true)) {
             log.warn("Previous job execution still running, skipping this iteration");
